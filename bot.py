@@ -122,7 +122,7 @@ def parse_quiz_file(file_content, file_type):
     current_options_raw = [] # Stores original lines for display (e.g., "A. Option Text")
     current_options_clean = [] # Stores clean text for internal matching (e.g., "Option Text")
     current_answer_raw_input = None # The raw string from "ANSWER: X" or "ANSWER: Option Text"
-
+    
     def save_question():
         nonlocal current_question, current_options_raw, current_options_clean, current_answer_raw_input
         if current_question and len(current_options_raw) >= 2:
@@ -321,6 +321,19 @@ async def leaderboard_command(update: Update, context: ContextTypes.DEFAULT_TYPE
         leaderboard += f"{emoji} {i+1}\\. @{escaped_username} \\- {score} pts\n" # Escape '.' and '-'
     
     await update.message.reply_text(leaderboard, parse_mode="MarkdownV2") # Use MarkdownV2
+
+# New help command
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Sends a message with social media links."""
+    social_media_text = (
+        "👋 Need help or want to connect?\n\n"
+        "Here are my socials:\n"
+        "🔗 [Twitter/X](https://x.com/Victor_Eth01?t=VLXK1ddn1vHl3FpypBiFNA&s)\n"
+        "🔗 [Telegram](https://t.me/VictorEth01)\n\n"
+        "Feel free to reach out\\!" # Escaping the exclamation mark
+    )
+    await update.message.reply_text(social_media_text, parse_mode="MarkdownV2", disable_web_page_preview=True)
+
 
 # --- Button Handler ---
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -643,7 +656,8 @@ async def post_init(application: Application):
         ("start", "Welcome message"),
         ("upload_quiz", "Admin: Upload the quiz file"),
         ("start_quiz", "Admin: Start the quiz"),
-        ("leaderboard", "Show current leaderboard")
+        ("leaderboard", "Show current leaderboard"),
+        ("help", "Get help and social media links") # Added help command
     ])
 
 # --- Main ---
@@ -659,6 +673,7 @@ def main():
     application.add_handler(CommandHandler("upload_quiz", upload_quiz_command))
     application.add_handler(CommandHandler("start_quiz", start_quiz_command))
     application.add_handler(CommandHandler("leaderboard", leaderboard_command))
+    application.add_handler(CommandHandler("help", help_command)) # Registered help command
     application.add_handler(CallbackQueryHandler(button_handler))
     application.run_polling()
 
